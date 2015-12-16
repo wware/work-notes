@@ -69,11 +69,12 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         return f
 
     def hack_markdown(self, content):
+        content = unicode(content, 'utf-8')
         return (
             "<html><head><style type=\"text/css\">" +
             open("markdown.css").read() +
             "</style></head>" +
-            grip.render_content(unicode(content)) +
+            grip.render_content(content) +
             "</body></html>"
         )
 
@@ -93,6 +94,9 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         if self.path.endswith(".ico"):
             SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
             return
+        elif self.path.endswith(".html"):
+            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            return
         elif self.path.endswith(".md"):
             response = self.hack_markdown(content)
         elif self.path.endswith(".sh") or self.path.endswith(".bash"):
@@ -107,8 +111,6 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             response = self.hack_language('js', content)
         elif self.path.endswith(".css"):
             response = self.hack_language('css', content)
-        elif self.path.endswith(".html"):
-            response = self.hack_language('html', content)
         elif self.path.endswith(".py"):
             response = self.hack_language('python', content)
         else:
