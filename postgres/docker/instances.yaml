@@ -1,0 +1,6 @@
+---
+postgres:
+    comment: foo
+    build:
+        - path: postgres
+          tag: mars/postgres
