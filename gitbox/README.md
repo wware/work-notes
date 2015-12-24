@@ -35,3 +35,44 @@ detecting that the power cord has been pulled, supplying auxiliary power,
 telling the RPi to shut down, detecting when shutdown has finished, and
 switching off the auxiliary power. There should be a LED that stays lit until
 the power is really off, maybe the RPi has one of its own.
+
+Gitlab via Docker
+====
+
+Begin by installing Docker on your Linux VM. The docker.io package in the
+standard Ubuntu repository is too old and busted and crappy.
+
+```
+$ curl -sSL https://get.docker.com/ | sh
+$ sudo usermod -a -G docker $USER
+```
+
+You'll need to log out and log back in for the second command to take effect.
+
+Put this line in the file `/etc/default/docker`.
+
+```
+DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --bip=192.168.0.1/24"
+```
+
+Then type:
+
+```
+sudo service service docker restart
+docker pull gitlab/gitlab-ce
+sudo docker run --detach \
+    --hostname gitlab.example.com \
+    --publish 8443:443 --publish 8080:80 --publish 2222:22 \
+    --name gitlab \
+    --restart always \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+```
+
+After starting the instance, I needed to use "git exec -it gitlab /bin/bash" to go
+in and change the file /etc/gitlab/gitlab.rb, changing the value of "unicorn[list]"
+to "0.0.0.0". Then I could reach the webserver onn port 8080 of the docker host.
+Tthe root password is initially "5iveL!ve" and they'll want you to immediately change
+it to something else.
