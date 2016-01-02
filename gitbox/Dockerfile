@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Sven Dowideit <SvenDowideit@docker.com>
 
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get install -y openssh-server python-virtualenv python-pip git ruby
 RUN mkdir /var/run/sshd
 RUN echo 'root:screencast' | chpasswd

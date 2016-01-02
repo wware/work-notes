@@ -24,7 +24,7 @@ The web interface appears on port 1234.
 
 ```bash
 docker build -t gitbox .
-docker run -d --name=gitbox gitbox
+docker run -d -v /opt/git:/opt/git --name=gitbox gitbox
 docker inspect gitbox | grep IPAddress
 ```
 
